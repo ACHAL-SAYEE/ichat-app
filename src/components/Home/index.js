@@ -15,14 +15,14 @@ import Popup from 'reactjs-popup'
 import GroupMessage from '../GroupMessage'
 import Peer from 'peerjs'
 import SocketMyPeerContext from '../../context'
+import {setCallAnsweringUserId} from '../../callHandling'
 
+let incomingCount = 0
 const myPeer = new Peer(undefined, {
   host: 'localhost',
   port: '3009',
   path: '/peerjs',
 })
-
-
 
 const iChatJwtToken = Cookies.get('ichat_jwt_token')
 var audio = new Audio('/ting.mp3')
@@ -59,8 +59,8 @@ export class Home extends Component {
     callerName: null,
     activeVideoCallId: null,
     myPeer: null,
-    callerId: null,
     outGoingCallView: false,
+    updatedCaller: false,
   }
 
   async componentDidMount() {
@@ -97,24 +97,22 @@ export class Home extends Component {
       this.setState({status})
     })
     socket.on('user-answered-call', (VideoCallId, CallAnswererId) => {
+       setCallAnsweringUserId(CallAnswererId) 
       console.log('user picked up your call')
-      this.props.history.push({
-        pathname: `/video-call/${VideoCallId}`,
-        state: {
-          CallAnswererId,
-        },
-      })
-      //   connectToNewUser(CallAnswererId, stream)
+      this.props.history.push(`/video-call/${VideoCallId}`)
     })
     socket.on('pick-call', (videocallId, callerName, userId) => {
+      //    CallAnsweringUserId=userId
+
       console.log('callerId', userId)
       ringtone.play()
       this.setState({
         IncomingCallView: true,
         callerName: callerName,
         activeVideoCallId: videocallId,
-        callerId: userId,
+        // callerId: userId,
       })
+      setCallAnsweringUserId(userId)
     })
 
     socket.on('user-disconected', phoneNo => {
@@ -472,12 +470,7 @@ export class Home extends Component {
     } else {
       const {history} = this.props
       const videocallId = uuidv4()
-      //   history.push(`/video-call/${videocallId}`)
-    //   const apiUrl = 'http://localhost:3007/video-call'
-      console.log(myPeer)
-      //   myPeer.on('open', id => {
       this.setState({outGoingCallView: true})
-      console.log('call placed')
       socket.emit(
         'join-call',
         videocallId,
@@ -485,23 +478,22 @@ export class Home extends Component {
         phoneNo,
         myPeer.id,
       )
-      //   })
     }
   }
 
   answerCall = () => {
-    const {socket, activeVideoCallId,callerId} = this.state
+    const {socket, activeVideoCallId, callerId} = this.state
     ringtone.pause()
     ringtone.currentTime = 0
     socket.emit('answer-call', activeVideoCallId, myPeer.id)
-    console.log('socket', socket)
-    console.log('myPeer', myPeer)
+
     const {history} = this.props
     history.push({
       pathname: `/video-call/${activeVideoCallId}`,
-      state: {
-        CallAnswererId:callerId,
-      },
+      //   state: {
+      //     CallAnswererId:callerId,
+      //   },
+      CallAnswererId: callerId,
     })
   }
   declineCall = () => {
@@ -532,7 +524,14 @@ export class Home extends Component {
       socket,
       myPeer,
       outGoingCallView,
+      callerId,
+      updatedCaller,
     } = this.state
+
+    if (this.state.updatedCaller) {
+      this.answerCall()
+    }
+
     const activeContactDetails = userDetails.contacts.find(
       contact => contact.name === activeContact,
     )
@@ -553,11 +552,6 @@ export class Home extends Component {
       <SocketMyPeerContext.Consumer>
         {value => {
           const {changeSocket, changeMyPeer} = value
-          {
-            /* const onChangeLanguage = event => {
-            changeLanguage(event.target.value)
-          } */
-          }
 
           return (
             <div className={styles.bg}>
