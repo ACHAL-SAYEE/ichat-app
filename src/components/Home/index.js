@@ -18,7 +18,7 @@ import SocketMyPeerContext from '../../context'
 
 const myPeer = new Peer(undefined, {
   host: 'localhost',
-  port: '3009',
+  port: '10000',
   path: '/peerjs',
 })
 
