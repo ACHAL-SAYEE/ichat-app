@@ -167,7 +167,7 @@ class VideoCall extends Component {
         addVideoStream(video, userVideoStream);
       });
     });
-
+console.log("history",this.props.location.state)
     const { CallAnswererId } = this.props.location.state;
     this.connectToNewUser(CallAnswererId, myStream);
   };
