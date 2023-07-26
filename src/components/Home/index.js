@@ -19,7 +19,7 @@ import {setCallAnsweringUserId} from '../../callHandling'
 
 let incomingCount = 0
 const myPeer = new Peer(undefined, {
-  host: 'localhost',
+  host: 'apis-ichat.onrender.com',
   port: '3009',
   path: '/peerjs',
 })
@@ -193,7 +193,7 @@ export class Home extends Component {
   }
 
   getPresentUserStatus = async () => {
-    const apiUrl = 'http://localhost:3007/status'
+    const apiUrl = 'https://apis-ichat.onrender.com/status'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -449,7 +449,7 @@ export class Home extends Component {
     const connectedUser = status.find(user => user.phoneNo === phoneNo)
     const InviteDetails = {phoneNo}
     if (!connectedUser.online) {
-      const apiUrl = 'http://localhost:3007/invite'
+      const apiUrl = 'https://apis-ichat.onrender.com/invite'
       const options = {
         headers: {
           Authorization: `Bearer ${iChatJwtToken}`,
