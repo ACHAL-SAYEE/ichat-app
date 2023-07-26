@@ -17,7 +17,7 @@ import Peer from 'peerjs'
 import SocketMyPeerContext from '../../context'
 
 const myPeer = new Peer(undefined, {
-  host: 'localhost',
+  host: 'https://apis-ichat.onrender.com',
   port: '10000',
   path: '/peerjs',
 })
