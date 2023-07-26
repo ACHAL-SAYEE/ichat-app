@@ -20,7 +20,7 @@ import {setCallAnsweringUserId} from '../../callHandling'
 let incomingCount = 0
 const myPeer = new Peer(undefined, {
   host: 'apis-ichat.onrender.com',
-  port: '3009',
+  port: '10000',
   path: '/peerjs',
 })
 
