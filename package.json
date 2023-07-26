@@ -7,6 +7,7 @@
     "@testing-library/react": "11.2.5",
     "@testing-library/user-event": "12.6.2",
     "js-cookie": "^3.0.5",
+    "peerjs": "^1.4.7",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-icons": "^4.10.1",
@@ -18,26 +19,24 @@
     "uuidv4": "^6.2.13",
     "web-vitals": "^2.1.4"
   },
+  
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test"
   },
+ 
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 edge versions"
+    ],
+    "production": [
+      ">1%",
+      "last 4 versions",
+      "Firefox ESR",
+      "not ie < 11"
     ]
-  },
-  "devDependencies": {
-    "eslint": "^8.44.0",
-    "eslint-plugin-react": "^7.32.2"
   }
 }

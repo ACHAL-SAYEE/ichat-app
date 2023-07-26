@@ -3,6 +3,7 @@ import { Component } from "react";
 import Cookies from "js-cookie";
 import { Redirect } from "react-router-dom";
 var audio = new Audio("/Windows7StartupSound.mp3");
+var errorAudio = new Audio("/Windowserror.mp3");
 class LoginForm extends Component {
   state = {
     phoneNo: "",
@@ -95,10 +96,12 @@ class LoginForm extends Component {
         });
         this.onSubmitSuccess(data.iChatJwtToken);
       } else {
+          errorAudio.play()
         const data = await response.json();
         throw new Error(data.error_msg);
       }
     } catch (error) {
+         errorAudio.play()
       this.onSubmitFailure(error.message);
       console.log(error.message);
     }
