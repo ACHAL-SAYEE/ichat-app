@@ -195,7 +195,7 @@ export class Home extends Component {
   }
 
   getPresentUserStatus = async () => {
-    const apiUrl = 'http://localhost:3007/status'
+    const apiUrl = 'https://apis-ichat.onrender.com/status'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -451,7 +451,7 @@ export class Home extends Component {
     const connectedUser = status.find(user => user.phoneNo === phoneNo)
     const InviteDetails = {phoneNo}
     if (!connectedUser.online) {
-      const apiUrl = 'http://localhost:3007/invite'
+      const apiUrl = 'https://apis-ichat.onrender.com/invite'
       const options = {
         headers: {
           Authorization: `Bearer ${iChatJwtToken}`,
@@ -473,7 +473,7 @@ export class Home extends Component {
       const {history} = this.props
       const videocallId = uuidv4()
       //   history.push(`/video-call/${videocallId}`)
-    //   const apiUrl = 'http://localhost:3007/video-call'
+    //   const apiUrl = 'https://apis-ichat.onrender.com/video-call'
       console.log(myPeer)
       //   myPeer.on('open', id => {
       this.setState({outGoingCallView: true})
