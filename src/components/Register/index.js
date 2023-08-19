@@ -1,132 +1,137 @@
-import styles from "./index.module.css";
-import Cookies from "js-cookie";
-import { Redirect } from "react-router-dom";
-import { Component } from "react";
-import socketIOClient from "socket.io-client";
-const socket = socketIOClient("https://apis-ichat.onrender.com");
+import Cookies from 'js-cookie'
+import {Redirect} from 'react-router-dom'
+import {Component} from 'react'
+import socketIOClient from 'socket.io-client'
+import styles from './index.module.css'
+
+const socket = socketIOClient('https://ichat-server-production.up.railway.app')
 
 class Register extends Component {
   state = {
-    name: "",
-    phoneNo: "",
-    errorMsg: "",
+    name: '',
+    phoneNo: '',
+    errorMsg: '',
     isOTPGenerated: false,
     isOTPVerified: false,
     showSubmitError: false,
     otp: null,
-  };
+  }
 
-  onSubmitFailure = (errorMsg) => {
-    this.setState({ showSubmitError: true, errorMsg });
-  };
+  onSubmitFailure = errorMsg => {
+    this.setState({showSubmitError: true, errorMsg})
+  }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { isOTPGenerated, isOTPVerified } = this.state;
+  handleSubmit = e => {
+    e.preventDefault()
+    const {isOTPGenerated, isOTPVerified} = this.state
 
     if (!isOTPGenerated) {
-      this.generateOTP();
+      this.generateOTP()
     } else if (!isOTPVerified) {
-      this.verifyOTP();
+      this.verifyOTP()
     }
-  };
+  }
 
   generateOTP = async () => {
-    const { phoneNo, name } = this.state;
-    const userDetails = { phoneNo, name };
-    console.log(userDetails);
-    const url = "https://apis-ichat.onrender.com/registerOtp";
+    const {phoneNo, name} = this.state
+    const userDetails = {phoneNo, name}
+    console.log(userDetails)
+    const url = 'https://ichat-server-production.up.railway.app/registerOtp'
     const options = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(userDetails),
-    };
+    }
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, options)
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json()
 
-        console.log(data);
+        console.log(data)
         this.setState({
           isOTPGenerated: true,
           showSubmitError: false,
-        });
+        })
 
-       
-          socket.emit("storeregistrantsocketid", phoneNo);
+        socket.emit('storeregistrantsocketid', phoneNo)
       } else {
-        const data = await response.json();
-        console.log(data);
-        this.onSubmitFailure(data.error_msg);
+        const data = await response.json()
+        console.log(data)
+        this.onSubmitFailure(data.error_msg)
         // throw new Error(data.error_msg);
       }
     } catch (error) {
-      this.onSubmitFailure(error.message);
+      this.onSubmitFailure(error.message)
     }
-  };
+  }
 
   verifyOTP = async () => {
-    const { phoneNo, otp, name } = this.state;
-    const userDetails = { phoneNo, otp, name };
-    const url = "https://apis-ichat.onrender.com/registerVerifyOtp"; // Replace with your server-side API endpoint for verifying OTP
-    console.log(JSON.stringify(userDetails));
+    const {phoneNo, otp, name} = this.state
+    const userDetails = {phoneNo, otp, name}
+    const url =
+      'https://ichat-server-production.up.railway.app/registerVerifyOtp'
+    console.log(JSON.stringify(userDetails))
     const options = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json", // Set the Content-Type header
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(userDetails),
       //   body: userDetails,
-    };
+    }
 
     try {
-      const response = await fetch(url, options);
-      console.log(response);
+      const response = await fetch(url, options)
+      console.log(response)
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+        const data = await response.json()
+        console.log(data)
         this.setState({
           isOTPVerified: true,
-        });
-        const { history } = this.props;
-        history.push("/login");
+        })
+        const {history} = this.props
+        history.push('/login')
       } else {
-        const data = await response.json();
-        throw new Error(data.error_msg);
+        const data = await response.json()
+        throw new Error(data.error_msg)
       }
     } catch (error) {
-      this.onSubmitFailure(error.message);
-      console.log(error.message);
+      this.onSubmitFailure(error.message)
+      console.log(error.message)
     }
-  };
+  }
 
-  onChangeName = (e) => {
-    this.setState({ name: e.target.value });
-  };
+  onChangeName = e => {
+    this.setState({name: e.target.value})
+  }
 
-  onChangePhoneNo = (e) => {
-    this.setState({ phoneNo: e.target.value });
-  };
+  onChangePhoneNo = e => {
+    this.setState({phoneNo: e.target.value})
+  }
 
-  onChangeotp = (e) => {
-    this.setState({ otp: e.target.value });
-  };
+  onChangeotp = e => {
+    this.setState({otp: e.target.value})
+  }
 
   render() {
-    const iChatJwtToken = Cookies.get("ichat_jwt_token");
+    const iChatJwtToken = Cookies.get('ichat_jwt_token')
     if (iChatJwtToken !== undefined) {
-      return <Redirect to="/" />;
+      return <Redirect to="/" />
     }
-    const { isOTPGenerated, isOTPVerified, showSubmitError, errorMsg } =
-      this.state;
+    const {
+      isOTPGenerated,
+      isOTPVerified,
+      showSubmitError,
+      errorMsg,
+    } = this.state
     return (
       <div className={styles.bg}>
         <h1 className={styles.heading}>Welcome To iChat App</h1>
         <div className={styles.x}>
-          <div className={styles["login-register-container"]}>
-            <div className={styles["logo-container"]}>
+          <div className={styles['login-register-container']}>
+            <div className={styles['logo-container']}>
               <img
                 src="/images/iChatLogo.png"
                 alt="logo"
@@ -144,14 +149,18 @@ class Register extends Component {
                   <label htmlFor="PhoneNo">PHONE NUMBER</label>
                   <input
                     id="PhoneNo"
-                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    title="Please enter a valid phone number (numeric characters only)"
                     onChange={this.onChangePhoneNo}
                   />
                 </div>
-                <button className={styles["register-button"]} type="submit">
+                <button className={styles['register-button']} type="submit">
                   Register
                 </button>
-                <p className={styles.error_para}>{errorMsg}</p>
+                {showSubmitError && (
+                  <p className={styles.error_para}>{`*${errorMsg}`}</p>
+                )}
                 <p>
                   Already Registered?Click <a href="/login">here</a> to login
                 </p>
@@ -163,7 +172,7 @@ class Register extends Component {
                   <label htmlFor="otp">OTP</label>
                   <input id="otp" type="text" onChange={this.onChangeotp} />
                 </div>
-                <button className={styles["register-button"]} type="submit">
+                <button className={styles['register-button']} type="submit">
                   Verify Otp
                 </button>
               </form>
@@ -171,7 +180,7 @@ class Register extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
-export default Register;
+export default Register

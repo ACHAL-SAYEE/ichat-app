@@ -1,17 +1,20 @@
 .bg {
-  background-image: url("chatBackground.png");
+  background-image: url('chatBackground.png');
   height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: center;
+  /* background-size: cover; */
 }
 
 .chats-conatiner {
+  padding-left: 10px;
   display: flex;
   flex-direction: column;
   background-color: white;
   width: 400px;
   height: 100vh;
+  overflow-y: auto;
 }
 .home-loader-container {
   display: flex;
@@ -77,7 +80,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 600px;
   width: 100%;
+  height: 100vh;
 }
 
 .message-input {
@@ -90,9 +95,10 @@
 
 .msg-input-container {
   justify-self: flex-end;
+  align-self: center;
   display: flex;
   align-items: center;
-  bottom: 20px;
+  margin-bottom: 10px;
   width: 90%;
   height: 20px;
   background-color: transparent;
@@ -110,55 +116,151 @@
 }
 
 .Allmessages {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
   height: 100vh;
   width: 100%;
+  /* border: solid red; */
+  /* overflow: hidden; */
 }
 
 .messages {
-  height:calc(100vh - 30px);
+  height: calc(100vh - 30px);
   overflow: auto;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-.home-loader-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.three-dots{
-    background-color: transparent;
-    /* border:none; */
-    cursor: pointer;
-}
-.pop-items{
-    background-color: pink;
-}
-
-.chatHeader{
-    background-color: white;    
-    height:50px;
-    width:100%;
-    display: flex;
-    justify-content: space-between;
-    padding:10px;
-}
-
-.contact-info{
+.home-loader-container {
   display: flex;
-  align-items: center;    
+  align-items: center;
+  justify-content: center;
 }
-.contactname{
-    margin-bottom: 0px;
+.three-dots {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.pop-items {
+  /* background-color: pink; */
+  list-style-type: none;
+}
+/* .logOut-button {
+  background-color: transparent;
+  border: none;
+} */
+.pop-item {
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
-.status-info{
-     margin-top:0px
+.chatHeader {
+  background-color: white;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  box-sizing: border-box;
 }
-.call-icons{
-    margin-right: 40px;
+
+.contact-info {
+  display: flex;
+  align-items: center;
+}
+.contactname {
+  margin-bottom: 0px;
+}
+
+.status-info {
+  margin-top: 0px;
+}
+.call-icons {
+  margin-right: 40px;
+}
+.add-contact-btn {
+  background-color: transparent;
+  border: none;
+  margin-right: 15px;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.profile-picture {
+  /* width: 600px; */
+  height: 600px;
+}
+
+.info-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.account-type-container {
+  margin-right: 10px;
+}
+.account-type {
+  margin-bottom: -15px;
+}
+
+body {
+  margin: 0px;
+}
+
+.emoji-icon {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.call-icon {
+  background-color: transparent;
+  margin-right: 10px;
+  border: none;
+  cursor: pointer;
+}
+/* Define CSS variables for scrollbar colors */
+:root {
+  --scrollbar-thumb-color: #888; /* Color of the scrollbar thumb */
+  --scrollbar-track-color: #f1f1f1; /* Color of the scrollbar track */
+  --scrollbar-width: 10px; /* Width of the scrollbar */
+}
+
+/* Hide the scrollbar track by setting a transparent background */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+}
+
+/* Style the scrollbar thumb (the draggable handle) */
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 5px;
+}
+
+/* Style the scrollbar track (the area behind the thumb) */
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-color);
+}
+
+.contacts-online {
+  list-style-type: none;
+}
+
+.create-group-form {
+  overflow-y: auto;
+  border: solid red;
+}
+
+.create-group-label {
+  display: flex;
+  align-items: center;
 }

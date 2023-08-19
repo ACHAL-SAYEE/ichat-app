@@ -1,0 +1,19 @@
+#all-videos {
+  background-color: #202124;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.user-video {
+  display: flex;
+  /* flex-direction: column; */
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.currentVideo {
+  height: 99vh;
+  box-sizing: border-box;
+  /* padding: 5px; */
+}
