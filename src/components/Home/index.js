@@ -354,7 +354,7 @@ class Home extends Component {
 
     const {phoneNo, contactname, userDetails} = this.state
     const contactDetails = {phoneNo, contactname}
-    const apiUrl = 'http://localhost:3007/addContact'
+    const apiUrl = 'https://ichat-server-production.up.railway.app/addContact'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -756,6 +756,8 @@ class Home extends Component {
 
   acceptGroupCall = () => {
     const {activeVideoCallId, socket, userDetails} = this.state
+    ringtone.pause()
+    ringtone.currentTime = 0
     const {history} = this.props
     history.push(`/group-video-call/${activeVideoCallId}`)
     socket.emit(

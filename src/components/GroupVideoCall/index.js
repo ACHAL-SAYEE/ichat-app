@@ -17,19 +17,22 @@ let myPeer = null
 let MyPhoneNo = null
 let peers = {}
 function addVideoStream(video, stream, mutedval) {
-  console.log('video in fun', mutedval)
-
+  const videosGrid = document.getElementById('all-videos')
   video.srcObject = stream
   video.muted = mutedval
   video.addEventListener('loadedmetadata', () => {
     video.play()
   })
+  const paragraphElement = document.createElement('p')
+  paragraphElement.textContent = 'You'
+  paragraphElement.classList.add('display-color')
+  videosGrid.appendChild(paragraphElement)
 }
 function addUserVideoStream(stream, mutedval, joinedUserPhoneNo) {
   console.log('video in fun', mutedval)
   const video = document.createElement('video')
-  const videosGrid = document.getElementById('user-videos')
-  video.classList.add('user-video')
+  const videosGrid = document.getElementById('all-videos')
+  video.classList.add('currentVideo')
   video.srcObject = stream
   video.muted = mutedval
   video.addEventListener('loadedmetadata', () => {
@@ -38,6 +41,7 @@ function addUserVideoStream(stream, mutedval, joinedUserPhoneNo) {
   videosGrid.appendChild(video)
   const paragraphElement = document.createElement('p')
   paragraphElement.textContent = joinedUserPhoneNo
+  paragraphElement.classList.add('display-color')
   videosGrid.appendChild(paragraphElement)
 }
 class GroupVideoCall extends Component {
@@ -55,24 +59,49 @@ class GroupVideoCall extends Component {
     this.initializeSocketConnection()
   }
 
+  componentDidUpdate() {}
+
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.handleMouseMove)
+    if (myStream) {
+      myStream.getTracks().forEach(track => track.stop())
+    }
+  }
+
   connectToNewUser = (userId, stream, joinedUserPhoneNo) => {
     const call = myPeer.call(userId, stream)
-    // const video = this.incomingVideoRef.current
-    call.on('stream', userVideoStream => {
-      if (!mediaStreams.includes(userVideoStream.id)) {
-        addUserVideoStream(userVideoStream, false, joinedUserPhoneNo)
-        mediaStreams.push(userVideoStream.id)
-        console.log('triggered inside connect')
 
-        //   this.setState(
-        //     prev => ({
-        //       joinedUserInfo: [...prev.joinedUserInfo, userVideoStream],
-        //     }),
-        //     () => {
-        //       console.log('current value2', this.state.joinedUserInfo)
-        //     },
-        //   )
+    // const video = this.incomingVideoRef.current
+    call.on('stream', async userVideoStream => {
+      if (!mediaStreams.includes(userVideoStream.id)) {
+        mediaStreams.push(userVideoStream.id)
+        const options = {
+          headers: {
+            Authorization: `Bearer ${iChatJwtToken}`,
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({joinedUserPhoneNo}),
+        }
+        const response = await fetch(
+          'https://ichat-server-production.up.railway.app/getName2',
+          options,
+        )
+        const data = await response.json()
+        console.log('response', response)
+        console.log('repsonse recieved', data)
+        addUserVideoStream(userVideoStream, false, data.name)
+        console.log('triggered inside connect')
       }
+
+      //   this.setState(
+      //     prev => ({
+      //       joinedUserInfo: [...prev.joinedUserInfo, userVideoStream],
+      //     }),
+      //     () => {
+      //       console.log('current value2', this.state.joinedUserInfo)
+      //     },
+      //   )
     })
     // call.on('close', () => {
     //   video.remove()
@@ -101,14 +130,20 @@ class GroupVideoCall extends Component {
         method: 'POST',
         body: JSON.stringify({streamId: myStream.id}),
       }
-      const response = await fetch(
+
+      fetch(
         'https://ichat-server-production.up.railway.app/storestreamId',
         options,
       )
-      if (response.ok) {
-        const data = await response.json()
-        console.log(data)
-      }
+        .then(response => response.json())
+        .then(data => {
+          if (data) {
+            console.log(data)
+          }
+        })
+        .catch(error => {
+          console.error('An error occurred while fetching data:', error)
+        })
     } catch (error) {
       console.error('Error accessing media stream:', error)
     }
@@ -118,10 +153,28 @@ class GroupVideoCall extends Component {
       call.answer(myStream)
 
       //   joinCallSound.play()
-      call.on('stream', userVideoStream => {
+      call.on('stream', async userVideoStream => {
         if (!mediaStreams.includes(userVideoStream.id)) {
-          addUserVideoStream(userVideoStream, false)
           mediaStreams.push(userVideoStream.id)
+          const options = {
+            headers: {
+              Authorization: `Bearer ${iChatJwtToken}`,
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({streamId: userVideoStream.id}),
+          }
+          const response = await fetch(
+            'https://ichat-server-production.up.railway.app/getName',
+            options,
+          )
+          const data = await response.json()
+          console.log('response', response)
+          console.log('repsonse recieved', data)
+          //   setTimeout(() => {
+          addUserVideoStream(userVideoStream, false, data.name)
+          //   }, 1000)
+
           console.log('triggered inside')
           // this.setState(
           //   prev => ({
@@ -134,18 +187,19 @@ class GroupVideoCall extends Component {
         }
       })
     })
-    // setTimeout(() => this.connectToNewUser(AnswerercallerId, myStream), 1000)
 
     socket.on('user-joined-call', (callerPeerId, joinedUserPhoneNo) => {
       console.log('triggerd')
       console.log('socketval,callerPeerId', callerPeerId)
+      //   setTimeout(() => {
       this.connectToNewUser(callerPeerId, myStream, joinedUserPhoneNo)
+      //   }, 1000)
     })
   }
 
   render() {
-    const {joinedUserInfo} = this.state
-    console.log('joinedUserInfo', joinedUserInfo)
+    // const {joinedUserInfo} = this.state
+    // console.log('joinedUserInfo', joinedUserInfo)
     return (
       <>
         <div id="all-videos">
@@ -174,10 +228,11 @@ class GroupVideoCall extends Component {
               <video
                 key={`${index}i`}
                 className="user-video"
+                // src="/vid.mp4"
                 ref={videoRef => {
                   if (videoRef) {
-                    console.log('videoRef', videoRef)
-                    videoRef.srcObject = myStream // Attach the stream to the video element
+                    console.log('streamInfo', userInfo.id)
+                    videoRef.srcObject = userInfo // Attach the stream to the video element
                   }
                 }}
               ></video>
