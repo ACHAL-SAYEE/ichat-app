@@ -86,6 +86,7 @@ class VideoCall extends Component {
     const video = this.incomingVideoRef.current
     call.on('stream', userVideoStream => {
       addVideoStream(video, userVideoStream, false)
+      this.setState({userVideoStream})
     })
     call.on('close', () => {
       video.remove()
@@ -128,6 +129,7 @@ class VideoCall extends Component {
 
       call.on('stream', userVideoStream => {
         addVideoStream(video, userVideoStream, false)
+        this.setState({userVideoStream})
       })
     })
     setTimeout(() => this.connectToNewUser(AnswerercallerId, myStream), 1000)
@@ -140,6 +142,7 @@ class VideoCall extends Component {
     })
     socket.on('mute-user-video', () => {
       let {userVideoStream} = this.state
+
       const {isIncomingCallAudioMuted} = this.state
       if (userVideoStream.getAudioTracks()[0].enabled) {
         userVideoStream.getAudioTracks()[0].enabled = false
@@ -154,6 +157,7 @@ class VideoCall extends Component {
 
     socket.on('onoff-user-video', () => {
       const {isIncomingCallAudioMuted, userVideoStream} = this.state
+      console.log('userVideoStream', userVideoStream)
       const videoTrack = userVideoStream
         .getTracks()
         .find(track => track.kind === 'video')

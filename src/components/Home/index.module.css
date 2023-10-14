@@ -7,6 +7,18 @@
   /* background-size: cover; */
 }
 
+.contacts-empty-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.empty-heading {
+  text-align: center;
+}
+
 .chats-conatiner {
   padding-left: 10px;
   display: flex;
@@ -21,6 +33,19 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+}
+
+.add-contact-btn2 {
+  background-color: #0967D2;
+  color: white;
+  padding: 10px;
+  /* border: none; */
+  border-radius: 20px;
+  cursor: pointer;
+}
+.add-contact-btn2:hover {
+    background-color: black;
+    color: white;
 }
 
 .search-container {
@@ -57,7 +82,7 @@
 .contact-item-selected {
   display: flex;
   align-items: center;
-  background-color: rgb(128, 179, 18);
+  background-color: #e8e8e8;
 }
 
 .contact-item:hover {
@@ -86,11 +111,13 @@
 }
 
 .message-input {
+  resize: none;
   width: calc(100% - 80px);
   margin-right: 10px;
   border: none;
   outline: none;
   background-color: transparent;
+  padding-top: 10px;
 }
 
 .msg-input-container {

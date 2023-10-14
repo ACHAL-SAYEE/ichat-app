@@ -12,7 +12,7 @@ import socketIOClient from 'socket.io-client'
 import userEvent from '@testing-library/user-event'
 import Popup from 'reactjs-popup'
 import Peer from 'peerjs'
-// import EmojiPicker from 'emoji-picker-react'
+// import EmojiPicker from 'emojsi-picker-react'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import GroupMessage from '../GroupMessage'
@@ -27,6 +27,7 @@ import {
   setCallingUserContactName,
   setUsersToConnect,
   setCurrentUserPhoneNo,
+  setActiveVideoCallId,
 } from '../../context/callHandling'
 
 // console.log(data)
@@ -106,12 +107,17 @@ class Home extends Component {
     await this.getProfilePictures()
     this.initializeSocketConnection()
     await this.getPresentUserStatus()
+    // this.scrollToBottom()
+  }
+
+  componentDidUpdate() {
+    // this.scrollToBottom()
   }
 
   initializeSocketConnection = () => {
     const {userDetails} = this.state
     const socket = socketIOClient(
-      'https://ichat-server-production.up.railway.app',
+      'https://apis-ichat.onrender.com',
       //   'http://localhost:3007',
     )
     setMyPeerObject(myPeer)
@@ -124,6 +130,7 @@ class Home extends Component {
     })
 
     socket.on('newMessage', newMessageDetils => {
+      console.log('jjjjjj')
       this.updateMessagesList(newMessageDetils)
       audio.play()
     })
@@ -204,6 +211,7 @@ class Home extends Component {
           peerId: callerPeerId,
         })
         setUsersToConnect(UserToConnect)
+        setActiveVideoCallId(videocallId)
         socket.emit('join-group-call-room', videocallId)
         ringtone.play()
       },
@@ -237,7 +245,7 @@ class Home extends Component {
       apiStatus: apiStatusConstants.inProgress,
     })
 
-    const apiUrl = 'https://ichat-server-production.up.railway.app/profile'
+    const apiUrl = 'https://apis-ichat.onrender.com/profile'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -246,7 +254,7 @@ class Home extends Component {
     }
     const response = await fetch(apiUrl, options)
 
-    const apiUrl2 = 'https://ichat-server-production.up.railway.app/groups'
+    const apiUrl2 = 'https://apis-ichat.onrender.com/groups'
     const options2 = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -288,8 +296,7 @@ class Home extends Component {
   }
 
   getProfilePictures = async () => {
-    const apiUrl =
-      'https://ichat-server-production.up.railway.app/profilepicture'
+    const apiUrl = 'https://apis-ichat.onrender.com/profilepicture'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -312,7 +319,7 @@ class Home extends Component {
   }
 
   getPresentUserStatus = async () => {
-    const apiUrl = 'https://ichat-server-production.up.railway.app/status'
+    const apiUrl = 'https://apis-ichat.onrender.com/status'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -354,7 +361,7 @@ class Home extends Component {
 
     const {phoneNo, contactname, userDetails} = this.state
     const contactDetails = {phoneNo, contactname}
-    const apiUrl = 'https://ichat-server-production.up.railway.app/addContact'
+    const apiUrl = 'https://apis-ichat.onrender.com/addContact'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -471,8 +478,7 @@ class Home extends Component {
         MessageDetails,
       }
       this.setState({messageInput: ''})
-      const apiUrl =
-        'https://ichat-server-production.up.railway.app/sendMessage'
+      const apiUrl = 'https://apis-ichat.onrender.com/sendMessage'
       const options = {
         headers: {
           Authorization: `Bearer ${iChatJwtToken}`,
@@ -513,8 +519,7 @@ class Home extends Component {
         MessageDetails,
       }
 
-      const apiUrl =
-        'https://ichat-server-production.up.railway.app/sendGroupMessage'
+      const apiUrl = 'https://apis-ichat.onrender.com/sendGroupMessage'
       const options = {
         headers: {
           Authorization: `Bearer ${iChatJwtToken}`,
@@ -550,7 +555,7 @@ class Home extends Component {
   createGroup = async () => {
     const {groupName} = this.state
     const groupDetails = {groupName, groupUsers}
-    const apiUrl = 'https://ichat-server-production.up.railway.app/createGroup'
+    const apiUrl = 'https://apis-ichat.onrender.com/createGroup'
     const options = {
       headers: {
         Authorization: `Bearer ${iChatJwtToken}`,
@@ -576,7 +581,7 @@ class Home extends Component {
     const connectedUser = status.find(user => user.phoneNo === phoneNo)
     const InviteDetails = {phoneNo}
     if (!connectedUser.online) {
-      const apiUrl = 'https://ichat-server-production.up.railway.app/invite'
+      const apiUrl = 'https://apis-ichat.onrender.com/invite'
       const options = {
         headers: {
           Authorization: `Bearer ${iChatJwtToken}`,
@@ -614,7 +619,7 @@ class Home extends Component {
         method: 'GET',
       }
       const response = await fetch(
-        `https://ichat-server-production.up.railway.app/socketId/?phoneNo=${phoneNo}`,
+        `https://apis-ichat.onrender.com/socketId/?phoneNo=${phoneNo}`,
         options,
       )
       const data2 = await response.json()
@@ -638,6 +643,7 @@ class Home extends Component {
     )
     // setUsersToConnect(GroupVideoCallUsers)
     setCurrentUserPhoneNo(userDetails.phoneNo)
+    setActiveVideoCallId(videocallId)
     const {history} = this.props
     history.push({
       pathname: `/group-video-call/${videocallId}`,
@@ -655,7 +661,7 @@ class Home extends Component {
     history.push({
       pathname: `/video-call/${activeVideoCallId}`,
       state: {
-        VideoCallId: activeVideoCallId,
+        videoCallId: activeVideoCallId,
       },
     })
   }
@@ -688,10 +694,7 @@ class Home extends Component {
         body: formData,
       }
       // const response =
-      await fetch(
-        'https://ichat-server-production.up.railway.app/upload',
-        options,
-      )
+      await fetch('https://apis-ichat.onrender.com/upload', options)
         .then(response => {
           if (response.ok) {
             return response.json()
@@ -716,7 +719,7 @@ class Home extends Component {
   }
 
   InitializeGroupCall = async activeGroupDetails => {
-    const url = 'https://ichat-server-production.up.railway.app/getDetails'
+    const url = 'https://apis-ichat.onrender.com/getDetails'
     const {status} = this.state
     console.log('activeGroupDetails', activeGroupDetails)
     console.log(this.state.status)
@@ -759,7 +762,12 @@ class Home extends Component {
     ringtone.pause()
     ringtone.currentTime = 0
     const {history} = this.props
-    history.push(`/group-video-call/${activeVideoCallId}`)
+    history.push({
+      pathname: `/group-video-call/${activeVideoCallId}`,
+      state: {
+        videoCallId: activeVideoCallId,
+      },
+    })
     socket.emit(
       'answer-group-call',
       activeVideoCallId,
@@ -834,6 +842,20 @@ class Home extends Component {
     let activeContactLastSeen
     let hours
     let minutes
+    let date
+    let dayOfWeek
+    let month
+    let fullyear
+    const dayNames = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ]
+
     console.log('activeContactDetails', activeContactDetails)
     if (activeContactDetails) {
       activeContactStatusDetails = status.find(
@@ -845,6 +867,10 @@ class Home extends Component {
       const dateObject = new Date(activeContactLastSeen)
 
       hours = dateObject.getHours()
+      date = dateObject.getDate()
+      dayOfWeek = dateObject.getDay()
+      month = dateObject.getMonth()
+      fullyear = dateObject.getFullYear()
       if (hours < 10) {
         hours = `0${hours}`
       }
@@ -862,16 +888,18 @@ class Home extends Component {
           {!showCreateNewGroupView &&
             userDetails.contacts.length === 0 &&
             !showAddContactsView && (
-              <>
-                <h1>Your contacts list is empty</h1>
+              <div className={styles['contacts-empty-view']}>
+                <h1 className={styles['empty-heading']}>
+                  Your contacts list is empty
+                </h1>
                 <button
                   type="button"
-                  className={styles.x}
+                  className={styles['add-contact-btn2']}
                   onClick={this.ToggleAddContactsView}
                 >
                   Add Contacts
                 </button>
-              </>
+              </div>
             )}
 
           {!showCreateNewGroupView &&
@@ -885,7 +913,7 @@ class Home extends Component {
                   {/* <div className={styles['account-type-container']}>
                     <p className={styles['account-type']}>Trial</p>
 
-                    <a href="https://ichat-server-production.up.railway.app/trialaccount">
+                    <a href="https://apis-ichat.onrender.com/trialaccount">
                       <p>Learn more</p>
                     </a> */}
                   {/* </div> */}
@@ -917,13 +945,13 @@ class Home extends Component {
                           Add profile picture
                         </li>
                         <li
-                          className={styles['logOut-button pop-item']}
+                          className={`${styles['logOut-button']} ${styles['pop-item']}`}
                           onClick={this.onClickLogout}
                         >
                           LogOut
                         </li>
                         <li
-                          className={styles['add-contact-btn']}
+                          className={`${styles['add-contact-btn']} ${styles['pop-item']}`}
                           onClick={() => {
                             this.ToggleAddContactsView()
                             // close()
@@ -992,7 +1020,7 @@ class Home extends Component {
                             >
                               <img
                                 className={styles['profile-picture']}
-                                src={`https://ichat-server-production.up.railway.app/images/${contact.phoneNo}`}
+                                src={`https://apis-ichat.onrender.com/images/${contact.phoneNo}`}
                               />
                             </Popup>
                             <img
@@ -1002,7 +1030,7 @@ class Home extends Component {
                                 })
                               }}
                               className={styles['profile-img']}
-                              src={`https://ichat-server-production.up.railway.app/images/${contact.phoneNo}`}
+                              src={`https://apis-ichat.onrender.com/images/${contact.phoneNo}`}
                             />
                           </>
                         )}
@@ -1056,10 +1084,10 @@ class Home extends Component {
               </h1>
 
               <div className={styles['msg-input-container']}>
-                <input
+                <textarea
                   className={styles['message-input']}
                   value={messageInput}
-                  placeholder="Type Message"
+                  //   placeholder="Type Message"
                   onChange={this.updateMsgValue}
                   onKeyUp={event =>
                     this.postMsg(event, activeContactDetails.phoneNo)
@@ -1086,9 +1114,26 @@ class Home extends Component {
                   <div>
                     <p className={styles.contactname}>{activeContact}</p>
                     <p className={styles['status-info']}>
-                      {activeContactStatus
-                        ? 'Online'
-                        : `Last Seen Today at ${hours}:${minutes}`}
+                      {(() => {
+                        switch (true) {
+                          case !activeContactStatus &&
+                            date === new Date().getDate():
+                            return `Last Seen Today at ${hours}:${minutes}`
+                          case activeContactStatus:
+                            return 'Online'
+                          case !activeContactStatus &&
+                            date === new Date().getDate() - 1:
+                            return `Last Seen Yesterday at ${hours}:${minutes}`
+                          case !activeContactStatus &&
+                            new Date().getDate() - date <= 7:
+                            return `Last Seen ${dayNames[dayOfWeek]} at ${hours}:${minutes}`
+                          case !activeContactStatus &&
+                            new Date().getDate() - date > 7:
+                            return `Last Seen on ${date}-${month}-${fullyear} at ${hours}:${minutes}`
+                          default:
+                            return ''
+                        }
+                      })()}
                     </p>
                   </div>
                 </div>
@@ -1106,7 +1151,7 @@ class Home extends Component {
                   </button>
                 </div>
               </div>
-              <div className={styles.messages}>
+              <div className={styles.messages} ref={this.scrollContainerRef}>
                 {MessagesList.map(messageDetails => (
                   <Message messageDetails={messageDetails} />
                 ))}
@@ -1124,7 +1169,7 @@ class Home extends Component {
                 >
                   <Picker data={data} onEmojiSelect={this.handleEmojiClick} />
                 </Popup>
-                <input
+                <textarea
                   className={styles['message-input']}
                   value={messageInput}
                   placeholder="Type Message"
@@ -1145,7 +1190,7 @@ class Home extends Component {
               </h1>
 
               <div className={styles['msg-input-container']}>
-                <input
+                <textarea
                   className={styles['message-input']}
                   value={messageInput}
                   placeholder="Type Message"
@@ -1215,7 +1260,7 @@ class Home extends Component {
                 })}
               </div>
               <div className={styles['msg-input-container']}>
-                <input
+                <textarea
                   className={styles['message-input']}
                   value={messageInput}
                   placeholder="Type Message"
@@ -1477,6 +1522,13 @@ class Home extends Component {
         return this.renderLoadingView()
       default:
         return <h1>rt</h1>
+    }
+  }
+
+  scrollToBottom() {
+    const scrollContainer = this.scrollContainerRef.current
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight
     }
   }
 

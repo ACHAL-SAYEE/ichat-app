@@ -5,25 +5,35 @@ import styles from './index.module.css'
 
 var audio = new Audio('/Windows7StartupSound.mp3')
 var errorAudio = new Audio('/Windowserror.mp3')
-class LoginForm extends Component {
+class ResetPassword extends Component {
   state = {
-    phoneNo: '',
+    phoneNo: '9398088463',
     errorMsg: '',
     isOTPGenerated: false,
     isOTPVerified: false,
     showSubmitError: false,
     otp: null,
-    loginMode: 'password',
+    password: '',
+    confirmPassword: '',
+    isSuccessfullyReset: false,
   }
 
-  onSubmitSuccess = iChatJwtToken => {
-    const {history} = this.props
-
-    Cookies.set('ichat_jwt_token', iChatJwtToken, {
-      expires: 30,
-    })
-    history.replace('/')
-    audio.play()
+  handleSubmit = e => {
+    e.preventDefault()
+    const {
+      isOTPGenerated,
+      isOTPVerified,
+      otp,
+      password,
+      confirmPassword,
+    } = this.state
+    if (!isOTPGenerated) {
+      this.generateOTP()
+    } else if (!isOTPVerified) {
+      this.verifyOTP()
+    } else if (isOTPVerified) {
+      this.ResetPassword()
+    }
   }
 
   onSubmitFailure = errorMsg => {
@@ -31,50 +41,35 @@ class LoginForm extends Component {
     this.setState({showSubmitError: true, errorMsg})
   }
 
-  loginUserWithPassword = async () => {
-    const {phoneNo, password} = this.state
-    const userDetails = {phoneNo, password}
-    const url = 'https://apis-ichat.onrender.com/loginwithPassword'
-    console.log(JSON.stringify(userDetails))
+  ResetPassword = async () => {
+    const {phoneNo, password, confirmPassword} = this.state
+    const userDetails = {phoneNo, password, confirmPassword}
+    const url = 'http://localhost:3007/resetPassword'
     const options = {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userDetails),
     }
-
     try {
       const response = await fetch(url, options)
-      //   console.log(response)
       if (response.ok) {
         const data = await response.json()
-        // console.log(data)
+
+        console.log(data)
         this.setState({
-          isOTPVerified: true,
+          isSuccessfullyReset: true,
+          //   i: false,this.on
         })
-        this.onSubmitSuccess(data.iChatJwtToken)
       } else {
-        errorAudio.play()
         const data = await response.json()
-        throw new Error(data.error_msg)
+        console.log(data)
+        this.onSubmitFailure(data.error_msg)
+        // throw new Error(data.error_msg);
       }
     } catch (error) {
-      errorAudio.play()
       this.onSubmitFailure(error.message)
-      console.log(error.message)
-    }
-  }
-
-  handleSubmit = e => {
-    e.preventDefault()
-    const {isOTPGenerated, isOTPVerified, loginMode} = this.state
-    if (loginMode === 'password') {
-      this.loginUserWithPassword()
-    } else if (!isOTPGenerated) {
-      this.generateOTP()
-    } else if (!isOTPVerified) {
-      this.verifyOTP()
     }
   }
 
@@ -82,7 +77,7 @@ class LoginForm extends Component {
     const {phoneNo} = this.state
     const userDetails = {phoneNo}
     console.log(userDetails)
-    const url = 'https://apis-ichat.onrender.com/loginOtp'
+    const url = 'http://localhost:3007/loginOtp'
     const options = {
       method: 'POST',
       headers: {
@@ -114,7 +109,7 @@ class LoginForm extends Component {
   verifyOTP = async () => {
     const {phoneNo, otp, name} = this.state
     const userDetails = {phoneNo, otp, name}
-    const url = 'https://apis-ichat.onrender.com/loginVerifyOtp'
+    const url = 'http://localhost:3007/loginVerifyOtp'
     console.log(JSON.stringify(userDetails))
     const options = {
       method: 'POST',
@@ -133,7 +128,7 @@ class LoginForm extends Component {
         this.setState({
           isOTPVerified: true,
         })
-        this.onSubmitSuccess(data.iChatJwtToken)
+        // this.onSubmitSuccess(data.iChatJwtToken)
       } else {
         errorAudio.play()
         const data = await response.json()
@@ -158,100 +153,37 @@ class LoginForm extends Component {
     this.setState({password: e.target.value})
   }
 
+  onChangeConfirmPassword = e => {
+    this.setState({confirmPassword: e.target.value})
+  }
+
   render() {
     const iChatJwtToken = Cookies.get('ichat_jwt_token')
     if (iChatJwtToken !== undefined) {
       return <Redirect to="/" />
     }
     const {
-      loginMode,
+      isSuccessfullyReset,
       phoneNo,
       otp,
       isOTPGenerated,
+      isOTPVerified,
       showSubmitError,
       errorMsg,
       password,
+      confirmPassword,
     } = this.state
     return (
       <div className={styles.bg}>
-        <video autoPlay loop muted playsInline className={styles['back-video']}>
-          <source src="/backgroundVideo.mp4" />
-        </video>
-        <h1 className={styles.heading}>Welcome To iChat </h1>
-        <img src="/images/iChatLogo.png" alt="logo" className={styles.logo} />
+        <h1 className={styles.heading}>Welcome To iChat App</h1>
         <div className={styles.x}>
           <div className={styles['login-register-container']}>
-            <div className={styles['logo-container']}>
-              {/* <img
-                src="/images/iChatLogo.png"
-                alt="logo"
-                className={styles.logo}
-              />
-              <h1>iChat</h1> */}
-            </div>
+            <div className={styles['logo-container']}></div>
             <form
               onSubmit={this.handleSubmit}
               className={styles['otp-container']}
             >
-              {loginMode === 'password' && (
-                <>
-                  <div className={styles['achal']}>
-                    <div className={styles.inputContainer}>
-                      <label htmlFor="PhoneNo">PHONE NUMBER</label>
-                      <input
-                        id="PhoneNo"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        title="Please enter a valid phone number (numeric characters only)"
-                        value={phoneNo}
-                        onChange={this.onChangePhoneNo}
-                        className={styles['inputFields']}
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <label htmlFor="password">PASSWORD</label>
-                      <input
-                        id="password"
-                        value={password}
-                        onChange={this.onChangePassword}
-                        className={styles['inputFields']}
-                      />
-                    </div>
-                    <p className={styles.forgottenText}>
-                      <a href="/resetPassword" className={styles.forgottenFuck}>
-                        Forgotten Password?
-                      </a>
-                    </p>
-
-                    <button type="submit" className={styles['btn']}>
-                      Sign in
-                    </button>
-                    <div className={styles.separator}>
-                      <div className={styles.line}></div>
-                      <div>or</div>
-                      <div className={styles.line}></div>
-                    </div>
-                    {/* <hr /> */}
-                    <button
-                      type="button"
-                      className={styles['btn']}
-                      onClick={() => {
-                        this.setState({loginMode: 'otp'})
-                      }}
-                    >
-                      Sign in with Otp
-                    </button>
-                    {showSubmitError && (
-                      <p className={styles['error-para']}>{`*${errorMsg}`}</p>
-                    )}
-                  </div>
-                  <p>
-                    Not Registered yet?Click <a href="/register">here</a> to
-                    register
-                  </p>
-                </>
-              )}
-              {loginMode === 'otp' && !isOTPGenerated && (
+              {!isOTPGenerated && (
                 <>
                   <div className={styles['achal']}>
                     <div className={styles.inputContainer}>
@@ -267,21 +199,7 @@ class LoginForm extends Component {
                       />
                     </div>
                     <button type="submit" className={styles['btn']}>
-                      Login
-                    </button>
-                    <div className={styles.separator}>
-                      <div className={styles.line}></div>
-                      <div>or</div>
-                      <div className={styles.line}></div>
-                    </div>
-                    <button
-                      className={styles['btn']}
-                      type="button"
-                      onClick={() => {
-                        this.setState({loginMode: 'password'})
-                      }}
-                    >
-                      Login with password
+                      Submit
                     </button>
                     {showSubmitError && (
                       <p className={styles['error-para']}>{`*${errorMsg}`}</p>
@@ -293,33 +211,81 @@ class LoginForm extends Component {
                   </p>
                 </>
               )}
-              {loginMode === 'otp' && isOTPGenerated && (
+              {isOTPGenerated && !isOTPVerified && (
                 <>
                   <div className={styles['achal']}>
                     <div className={styles.inputContainer}>
                       <label htmlFor="otp">OTP</label>
                       <input
                         id="otp"
-                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        title="Please enter a valid phone number (numeric characters only)"
                         value={otp}
                         onChange={this.onChangeotp}
                         className={styles['inputFields']}
                       />
                     </div>
-                    <button
-                      type="submit"
-                      className={styles['btn']}
-                      onClick={() => {
-                        this.setState({loginMode: 'password'})
-                      }}
-                    >
+                    <button type="submit" className={styles['btn']}>
                       Submit
                     </button>
+
+                    {showSubmitError && (
+                      <p className={styles['error-para']}>{`*${errorMsg}`}</p>
+                    )}
                   </div>
-                  <p>
-                    An otp has been sent to your phone number please enter the
-                    otp to continue
-                  </p>
+                </>
+              )}
+              {isOTPVerified && !isSuccessfullyReset && (
+                <>
+                  <div className={styles['achal']}>
+                    <div className={styles.inputContainer}>
+                      <label htmlFor="password">PASSWORD</label>
+                      <input
+                        id="password"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        title="Please enter a valid phone number (numeric characters only)"
+                        value={password}
+                        onChange={this.onChangePassword}
+                        className={styles['inputFields']}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <label htmlFor="confirmPassword">CONFIRM PASSWORD</label>
+                      <input
+                        id="confirmPassword"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        title="Please enter a valid phone number (numeric characters only)"
+                        value={confirmPassword}
+                        onChange={this.onChangeConfirmPassword}
+                        className={styles['inputFields']}
+                      />
+                    </div>
+                    <button type="submit" className={styles['btn']}>
+                      Submit
+                    </button>
+                    {/* <div className={styles.separator}>
+                      <div className={styles.line}></div>
+                      <div>or</div>
+                      <div className={styles.line}></div>
+                    </div>
+                    <hr /> */}
+                    {showSubmitError && (
+                      <p className={styles['error-para']}>{`*${errorMsg}`}</p>
+                    )}
+                  </div>
+                </>
+              )}
+              {isSuccessfullyReset && (
+                <>
+                  <div className={styles['achal']}>
+                    <p>
+                      Password reset successfully click<a href="/login">here</a>
+                      to login
+                    </p>
+                  </div>
                 </>
               )}
             </form>
@@ -329,4 +295,4 @@ class LoginForm extends Component {
     )
   }
 }
-export default LoginForm
+export default ResetPassword

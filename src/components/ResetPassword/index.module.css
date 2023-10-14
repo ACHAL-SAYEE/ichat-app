@@ -1,8 +1,5 @@
 .bg {
-  /* background-image: linear-gradient(to bottom, #dcd62c, #e213b1, #191d61); */
-  position: relative;
-  /* background-image: url('https://cdn.wallpaperhub.app/cloudcache/2/b/b/9/0/6/2bb9062555f5b2bf7e5a5f8d92dfb841ec6919e8.jpg');
-  background-size: cover; */
+  background-image: linear-gradient(to bottom, #dcd62c, #e213b1, #191d61);
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,10 +10,7 @@
 }
 
 .login-register-container {
-  /* background-color: #e6eef0; */
-  /* background-color: #17bd56; */
-  background-image: url('https://t4.ftcdn.net/jpg/05/97/16/07/360_F_597160742_I1ZvDpPkaPDlmaj5CgQiQJDprufFqv2j.jpg');
-  background-size: cover;
+  background-color: #e6eef0;
   /* height: 250px; */
   padding: 20px 0px 20px 0px;
   width: 100%;
@@ -147,55 +141,3 @@ form {
   height: 2px;
   background-color: #436d75;
 }
-
-@keyframes rotate_border {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.forgottenText {
-  margin-top: -5px;
-}
-
-.forgottenFuck {
-  text-decoration: none;
-  color: #41a2e8;
-}
-
-.back-video {
-  /* height: 100vh; */
-  width: 100vw;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-}
-/* .login-register-container::before {
-  content: '';
-  animation: rotate_border 6s linear infinite;
-  background-image: conic-gradient(
-    transparent,
-    transparent,
-    transparent,
-    #ee00ff
-  );
-}
-
-.login-register-container::after {
-  position: absolute;
-  width: 170%;
-  height: 170%;
-  content: '';
-  background-image: conic-gradient(
-    transparent,
-    transparent,
-    transparent,
-    #00ccff
-  );
-  animation: rotate_border 6s linear infinite;
-  animation-delay: -3s;
-} */

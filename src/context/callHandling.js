@@ -6,6 +6,7 @@ let UsersToConnect = null
 let CallingUserSocketId = null
 let callingUserContactName = null
 let currentUserPhoneNo = null
+let ActiveVideoCallId = null
 
 export function setCallingUserContactName(contactName) {
   callingUserContactName = contactName
@@ -60,4 +61,12 @@ export function setCurrentUserPhoneNo(phoneNo) {
 
 export function getCurrentUserPhoneNo() {
   return currentUserPhoneNo
+}
+
+export function setActiveVideoCallId(id) {
+  ActiveVideoCallId = id
+}
+
+export function getActiveVideoCallId() {
+  return ActiveVideoCallId
 }

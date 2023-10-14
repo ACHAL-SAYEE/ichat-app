@@ -8,6 +8,7 @@ import Home from './components/Home'
 import ProtectedRoute from './components/ProtectedRoute'
 import VideoCall from './components/VideoCall'
 import GroupVideoCall from './components/GroupVideoCall'
+import ResetPassword from './components/ResetPassword'
 import './App.css'
 
 class App extends Component {
@@ -16,6 +17,7 @@ class App extends Component {
       <Switch>
         <Route exact path="/login" component={LoginForm} />
         <Route exact path="/register" component={Register} />
+        <Route exact path="/resetPassword" component={ResetPassword} />
         <ProtectedRoute
           exact
           path="/video-call/:callId"

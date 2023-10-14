@@ -1,9 +1,52 @@
 #all-videos {
   background-color: #202124;
+  height: calc(100vh - 50px);
   display: flex;
+  flex-wrap: wrap;
   /* flex-direction: column; */
-  align-items: flex-start;
-  /* justify-content: center; */
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.user-videos-FocusView {
+  background-color: #202124;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#focused-video {
+  background-color: #202124;
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-wrap: wrap;
+  /* border: solid pink; */
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.currentVideo-focusView {
+  position: relative;
+  width: 200px;
+  box-sizing: border-box;
+  background-color: #202124;
+}
+
+.views {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+
+  /* border: solid yellow; */
+}
+.viewChangeBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
 .user-video {
   display: flex;
@@ -12,14 +55,68 @@
   margin-bottom: 10px;
 }
 .currentVideo {
+  border-radius: 20px;
   /* display: inline; */
-  border: solid red;
+  /* border: solid red; */
+}
+.focus-view {
+  display: flex;
+}
+.userName {
+  position: absolute;
+  top: -10px;
+  left: 4px;
+  z-index: 1;
+  color: black;
+  font-weight: 700;
 }
 
-.display-color {
-  color: white;
+.view-item {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  cursor: pointer;
+  /* border: solid yellow; */
+  margin-left: -40px;
 }
+
+.item {
+  margin-left: 10px;
+}
+.xy {
+  position: relative;
+  margin-left: 20px;
+  /* margin-right: 20px; */
+  /* border: solid blue; */
+  /* display: inline-block; */
+}
+
+.pin-btn {
+  background: transparent;
+}
+
+.controls {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #202124;
+}
+
+.pr {
+  /* border: solid red; */
+}
+
+.focusedVideo {
+  height: 90vh;
+  box-sizing: border-box;
+  /* padding: 5px; */
+}
+
 @media (orientation: portrait) {
+  #all-videos {
+    flex-direction: column;
+  }
   .currentVideo {
     width: 100vw;
     box-sizing: border-box;
@@ -28,8 +125,12 @@
 }
 @media (orientation: landscape) {
   .currentVideo {
-    width: 500px;
+    width: 400px;
     box-sizing: border-box;
+
     /* padding: 5px; */
   }
+  /* #all-video {
+   
+  } */
 }
